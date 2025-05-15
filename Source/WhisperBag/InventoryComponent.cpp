@@ -4,16 +4,27 @@
 #include "WhisperBag/InventoryItem.h"
 #include "WhisperBag/Item3dManager.h"
 #include "WhisperBag/MiscTypes.h"
+#include "WhisperBag/PickableItem.h"
 
 UInventoryComponent::UInventoryComponent() {
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-bool UInventoryComponent::Add2DItem(EItemType Type, UTexture2D *Icon) {
-    if (Items.Contains(Type)) {
+bool UInventoryComponent::AddItem(APickableItem *PickableItem) {
+    if (!PickableItem || Items.Contains(PickableItem->GetType())) {
         return false;
     }
 
+    if (PickableItem->GetDimensionType() == EItemDimensionType::Item2D) {
+        Add2dItem(PickableItem->GetType(), PickableItem->GetIcon2dTexture());
+    } else {
+        Add3dItem(PickableItem->GetType(), PickableItem);
+    }
+
+    return true;
+}
+
+bool UInventoryComponent::Add2dItem(EItemType Type, UTexture2D *Icon) {
     UInventoryItem *NewItem = NewObject<UInventoryItem>(this);
 
     NewItem->Icon2dTexture = Icon;
@@ -24,11 +35,7 @@ bool UInventoryComponent::Add2DItem(EItemType Type, UTexture2D *Icon) {
     return true;
 }
 
-bool UInventoryComponent::Add3DItem(EItemType Type, AActor *ItemInstance) {
-    if (Items.Contains(Type)) {
-        return false;
-    }
-
+bool UInventoryComponent::Add3dItem(EItemType Type, AActor *ItemInstance) {
     UInventoryItem *NewItem = NewObject<UInventoryItem>(this);
 
     AItem3dManager *Item3dManager = GetItem3dManager();

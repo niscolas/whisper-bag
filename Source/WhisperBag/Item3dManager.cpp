@@ -15,6 +15,8 @@ AItem3dManager::AItem3dManager() {
 }
 
 void AItem3dManager::BeginPlay() {
+    Super::BeginPlay();
+
     InitializeCaptureComponent();
 }
 

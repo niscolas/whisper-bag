@@ -7,6 +7,7 @@
 #include "InventoryComponent.generated.h"
 
 class AItem3dManager;
+class APickableItem;
 class UInventoryItem;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -18,10 +19,13 @@ public:
     UInventoryComponent();
 
     UFUNCTION(BlueprintCallable)
-    bool Add2DItem(EItemType Type, UTexture2D *Icon);
+    bool AddItem(APickableItem *PickableItem);
 
     UFUNCTION(BlueprintCallable)
-    bool Add3DItem(EItemType Type, AActor *ItemInstance);
+    bool Add2dItem(EItemType Type, UTexture2D *Icon);
+
+    UFUNCTION(BlueprintCallable)
+    bool Add3dItem(EItemType Type, AActor *ItemInstance);
 
 private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))

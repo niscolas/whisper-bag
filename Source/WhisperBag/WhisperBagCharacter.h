@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,67 +5,70 @@
 #include "Logging/LogMacros.h"
 #include "WhisperBagCharacter.generated.h"
 
-class USpringArmComponent;
 class UCameraComponent;
-class UInputMappingContext;
 class UInputAction;
+class UInputMappingContext;
+class UInteractorComponent;
+class UInventoryComponent;
+class USpringArmComponent;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-UCLASS(config=Game)
-class AWhisperBagCharacter : public ACharacter
-{
-	GENERATED_BODY()
+UCLASS(config = Game)
 
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
-
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
-	
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
+class AWhisperBagCharacter : public ACharacter {
+    GENERATED_BODY()
 
 public:
-	AWhisperBagCharacter();
-	
+    AWhisperBagCharacter();
 
-protected:
+    FORCEINLINE class USpringArmComponent *GetCameraBoom() const {
+        return CameraBoom;
+    }
 
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+    FORCEINLINE class UCameraComponent *GetFollowCamera() const {
+        return FollowCamera;
+    }
 
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
+private:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess))
+    USpringArmComponent *CameraBoom;
 
-protected:
-	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// To add mapping context
-	virtual void BeginPlay();
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess))
+    UCameraComponent *FollowCamera;
 
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+    UPROPERTY(VisibleAnywhere,
+              BlueprintReadOnly,
+              Category = "Inventory",
+              meta = (AllowPrivateAccess))
+    UInventoryComponent *InventoryComponent;
+
+    UPROPERTY(VisibleAnywhere,
+              BlueprintReadOnly,
+              Category = "Interaction",
+              meta = (AllowPrivateAccess))
+    UInteractorComponent *InteractorComponent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess))
+    UInputMappingContext *DefaultMappingContext;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess))
+    UInputAction *JumpAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess))
+    UInputAction *MoveAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess))
+    UInputAction *LookAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess))
+    UInputAction *InteractAction;
+
+    virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+    virtual void BeginPlay();
+
+    void Move(const FInputActionValue &Value);
+    void Look(const FInputActionValue &Value);
+    void Interact(const FInputActionValue &Value);
 };
-
