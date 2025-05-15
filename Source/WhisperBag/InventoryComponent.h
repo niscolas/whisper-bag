@@ -21,12 +21,6 @@ public:
     UFUNCTION(BlueprintCallable)
     bool AddItem(APickableItem *PickableItem);
 
-    UFUNCTION(BlueprintCallable)
-    bool Add2dItem(EItemType Type, UTexture2D *Icon);
-
-    UFUNCTION(BlueprintCallable)
-    bool Add3dItem(EItemType Type, AActor *ItemInstance);
-
 private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
     TMap<EItemType, UInventoryItem *> Items;
@@ -36,6 +30,12 @@ private:
 
     UPROPERTY(Transient)
     AItem3dManager *CachedItem3dManager;
+
+    UFUNCTION(BlueprintCallable)
+    bool Add2dItem(EItemType Type, UTexture2D *Icon, AActor *ItemInstance);
+
+    UFUNCTION(BlueprintCallable)
+    bool Add3dItem(EItemType Type, AActor *ItemInstance);
 
     AItem3dManager *GetItem3dManager();
 };

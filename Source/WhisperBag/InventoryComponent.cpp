@@ -16,7 +16,7 @@ bool UInventoryComponent::AddItem(APickableItem *PickableItem) {
     }
 
     if (PickableItem->GetDimensionType() == EItemDimensionType::Item2D) {
-        Add2dItem(PickableItem->GetType(), PickableItem->GetIcon2dTexture());
+        Add2dItem(PickableItem->GetType(), PickableItem->GetIcon2dTexture(), PickableItem);
     } else {
         Add3dItem(PickableItem->GetType(), PickableItem);
     }
@@ -24,13 +24,15 @@ bool UInventoryComponent::AddItem(APickableItem *PickableItem) {
     return true;
 }
 
-bool UInventoryComponent::Add2dItem(EItemType Type, UTexture2D *Icon) {
+bool UInventoryComponent::Add2dItem(EItemType Type, UTexture2D *Icon, AActor *ItemInstance) {
     UInventoryItem *NewItem = NewObject<UInventoryItem>(this);
 
     NewItem->Icon2dTexture = Icon;
     NewItem->DimensionType = EItemDimensionType::Item2D;
 
     Items.Add(Type, NewItem);
+
+    ItemInstance->Destroy();
 
     return true;
 }

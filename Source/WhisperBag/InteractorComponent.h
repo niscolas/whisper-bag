@@ -28,7 +28,7 @@ private:
     UPROPERTY()
     UInventoryComponent *InventoryComponent;
 
-    UPROPERTY()
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
     APickableItem *PossiblePickableItem;
 
     virtual void BeginPlay() override;

@@ -5,6 +5,8 @@
 #include "WhisperBag/MiscTypes.h"
 #include "PickableItem.generated.h"
 
+class USphereComponent;
+
 UCLASS()
 
 class WHISPERBAG_API APickableItem : public AActor {
@@ -26,14 +28,17 @@ public:
     }
 
 private:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess))
     EItemType Type;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess))
     EItemDimensionType DimensionType;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess))
     UTexture2D *Icon2dTexture;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+    USphereComponent *SphereCollider;
 
     virtual void BeginPlay() override;
 };
