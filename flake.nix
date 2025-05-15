@@ -11,37 +11,65 @@
     extra-substituters = "https://devenv.cachix.org";
   };
 
-  outputs = { self, nixpkgs, devenv, systems, ... } @ inputs:
-    let
-      forEachSystem = nixpkgs.lib.genAttrs (import systems);
-    in
-    {
-      packages = forEachSystem (system: {
-        devenv-up = self.devShells.${system}.default.config.procfileScript;
-        devenv-test = self.devShells.${system}.default.config.test;
-      });
+  outputs = {
+    self,
+    nixpkgs,
+    devenv,
+    systems,
+    ...
+  } @ inputs: let
+    forEachSystem = nixpkgs.lib.genAttrs (import systems);
+  in {
+    packages = forEachSystem (system: {
+      devenv-up = self.devShells.${system}.default.config.procfileScript;
+    });
 
-      devShells = forEachSystem
-        (system:
-          let
-            pkgs = nixpkgs.legacyPackages.${system};
-          in
-          {
-            default = devenv.lib.mkShell {
-              inherit inputs pkgs;
-              modules = [
-                {
-                  # https://devenv.sh/reference/options/
-                  packages = [ pkgs.hello ];
+    devShells =
+      forEachSystem
+      (system: let
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
 
-                  enterShell = ''
-                    hello
-                  '';
-
-                  processes.hello.exec = "hello";
-                }
+        projectDirPath = builtins.getEnv "PWD";
+        projectName = "WhisperBag";
+        unrealEditorBaseDirPath = "/mnt/storage/unreal_editors/5.4.1";
+        uprojectFilePath = "${projectDirPath}/${projectName}.uproject";
+      in {
+        default = devenv.lib.mkShell {
+          inherit inputs pkgs;
+          modules = [
+            {
+              packages = with pkgs; [
+                clang-tools_16
               ];
-            };
-          });
-    };
+
+              scripts = {
+                ueg.exec = ''
+                  ${unrealEditorBaseDirPath}/Engine/Build/BatchFiles/Linux/Build.sh \
+                  ${projectName} Linux Development '${uprojectFilePath}' -mode=GenerateClangDatabase \
+
+                  mv ${unrealEditorBaseDirPath}/compile_commands.json ${projectDirPath}
+                '';
+
+                uehr.exec = ''
+                  randomNumber=$(echo $(( ( RANDOM % 1000 ) + 1000 )))
+
+                  ${unrealEditorBaseDirPath}/Engine/Build/BatchFiles/Linux/Build.sh \
+                  -ModuleWithSuffix=${projectName},''${randomNumber} \
+                  ${projectName}Editor \
+                  Linux Development \
+                  -Project="${uprojectFilePath}" \
+                  "${uprojectFilePath}"  \
+                  -IgnoreJunk \
+                  -progress \
+                  -waitmutex
+                '';
+              };
+            }
+          ];
+        };
+      });
+  };
 }
