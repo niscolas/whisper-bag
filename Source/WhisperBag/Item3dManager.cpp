@@ -26,6 +26,10 @@ void AItem3dManager::Tick(float DeltaSeconds) {
 }
 
 void AItem3dManager::StartContinuousCaptureFor(EItemType Type) {
+    if (!RenderTargets.Contains(Type)) {
+        return;
+    }
+
     IsContinuousCaptureEnabled = true;
     ContinuousCaptureTarget = Type;
 
@@ -84,6 +88,4 @@ void AItem3dManager::RotateCapturedItem(float YawDelta, float PitchDelta) {
     CurrentRotation.Pitch = FMath::Clamp(CurrentRotation.Pitch + PitchDelta, MinPitch, MaxPitch);
 
     CurrentlyCapturedItem->SetActorRotation(CurrentRotation);
-
-    SceneCapture->CaptureScene();
 }
