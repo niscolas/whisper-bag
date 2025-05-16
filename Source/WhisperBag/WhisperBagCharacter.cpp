@@ -110,5 +110,5 @@ void AWhisperBagCharacter::Interact(const FInputActionValue &Value) {
         return;
     }
 
-    InteractorComponent->TryPickupItem();
+    InteractorComponent->TryInteract();
 }

@@ -4,8 +4,12 @@
 #include "CoreMinimal.h"
 #include "InteractorComponent.generated.h"
 
+class ADialogueTrigger;
 class APickableItem;
 class UInventoryComponent;
+
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewDialogueTriggered, TArray<FText>, DialogueLines);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 
@@ -19,9 +23,12 @@ public:
     void Setup(UInventoryComponent *InInventoryComponent);
 
     UFUNCTION()
-    void TryPickupItem();
+    void TryInteract();
 
 private:
+    UPROPERTY(BlueprintAssignable, meta = (AllowPrivateAccess))
+    FNewDialogueTriggered NewDialogueTriggered;
+
     UPROPERTY()
     USkeletalMeshComponent *OwnerMesh;
 
@@ -30,6 +37,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
     APickableItem *PossiblePickableItem;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+    ADialogueTrigger *PossibleDialogueTrigger;
 
     virtual void BeginPlay() override;
 
