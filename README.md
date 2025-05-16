@@ -8,11 +8,11 @@ https://github.com/user-attachments/assets/3a5f21c1-0c39-4e45-afc2-48bfcd9cc493
 
 ### 🎒 **Inventory System**  
 - **3D/2D Item Pickups** – Interact with world objects to add them to your inventory  
-- **Dynamic UI** – 4-slot grid with viewport preview  
+- **Dynamic UI** – Dynamic inventory UI with picked items and viewport for inspection
 - **Drag-and-Drop** – Move items between slots  
   - ✨ **3D Preview** – Rotate/zoom inspectable models in the viewport  
   - 🖼️ **2D Preview** – High-res enlarged icons  
-- **Remote Item Button** – Remove 2D items permanently  
+- **Remove Item Button** – Remove 2D items permanently  
 
 ### 💬 **Dialogue System**  
 - **NPC Interactions** – Trigger multi-part dialogues with world actors  
