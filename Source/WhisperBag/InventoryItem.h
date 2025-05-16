@@ -12,7 +12,7 @@ class WHISPERBAG_API UInventoryItem : public UObject {
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FText Name;
+    EItemType Type;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EItemDimensionType DimensionType;

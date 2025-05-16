@@ -1,4 +1,5 @@
 #include "InventoryComponent.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "WhisperBag/InventoryItem.h"
@@ -27,12 +28,15 @@ bool UInventoryComponent::AddItem(APickableItem *PickableItem) {
 bool UInventoryComponent::Add2dItem(EItemType Type, UTexture2D *Icon, AActor *ItemInstance) {
     UInventoryItem *NewItem = NewObject<UInventoryItem>(this);
 
+    NewItem->Type = Type;
     NewItem->Icon2dTexture = Icon;
     NewItem->DimensionType = EItemDimensionType::Item2D;
 
     Items.Add(Type, NewItem);
 
     ItemInstance->Destroy();
+
+    InventoryUpdated.Broadcast();
 
     return true;
 }
@@ -41,12 +45,14 @@ bool UInventoryComponent::Add3dItem(EItemType Type, AActor *ItemInstance) {
     UInventoryItem *NewItem = NewObject<UInventoryItem>(this);
 
     AItem3dManager *Item3dManager = GetItem3dManager();
-    Item3dManager->ManageItem(ItemInstance);
-    Item3dManager->CaptureItem(ItemInstance);
+    UTextureRenderTarget2D *RenderTarget = Item3dManager->CaptureItem(Type, ItemInstance);
 
-    NewItem->Icon3dRenderTarget = Item3dManager->GetRenderTarget();
+    NewItem->Type = Type;
+    NewItem->Icon3dRenderTarget = RenderTarget;
     NewItem->DimensionType = EItemDimensionType::Item3D;
     Items.Add(Type, NewItem);
+
+    InventoryUpdated.Broadcast();
 
     return true;
 }

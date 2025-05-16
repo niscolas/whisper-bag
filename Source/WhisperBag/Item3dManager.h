@@ -2,10 +2,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "WhisperBag/MiscTypes.h"
 #include "Item3dManager.generated.h"
 
 class USceneCaptureComponent2D;
 class UTextureRenderTarget2D;
+
+USTRUCT(BlueprintType)
+
+struct FItemCaptureData {
+    GENERATED_BODY()
+
+    UPROPERTY()
+    UTextureRenderTarget2D *TextureRenderTarget;
+
+    UPROPERTY()
+    AActor *Actor;
+};
 
 UCLASS()
 
@@ -15,17 +28,18 @@ class WHISPERBAG_API AItem3dManager : public AActor {
 public:
     AItem3dManager();
 
-    void InitializeCaptureComponent();
-    void CaptureItem(AActor *ItemToCapture);
-    void ClearCapture();
-    void RotateCapturedItem(float YawDelta, float PitchDelta);
+    UFUNCTION(BlueprintCallable)
+    void StartContinuousCaptureFor(EItemType Type);
 
     UFUNCTION(BlueprintCallable)
-    void ManageItem(AActor *Target);
+    void StopContinuousCapture();
 
-    UTextureRenderTarget2D *GetRenderTarget() {
-        return RenderTarget;
-    }
+    UFUNCTION(BlueprintCallable)
+    void RotateCapturedItem(float YawDelta, float PitchDelta);
+
+    void InitializeCaptureComponent();
+    UTextureRenderTarget2D *CaptureItem(EItemType Type, AActor *TargetActor);
+    void ClearCapture();
 
 private:
     UPROPERTY(VisibleAnywhere,
@@ -34,8 +48,14 @@ private:
               meta = (AllowPrivateAccess))
     USceneCaptureComponent2D *SceneCapture;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+    bool IsContinuousCaptureEnabled;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+    EItemType ContinuousCaptureTarget;
+
     UPROPERTY(EditAnywhere, Category = "Inventory", meta = (AllowPrivateAccess))
-    UTextureRenderTarget2D *RenderTarget;
+    TMap<EItemType, FItemCaptureData> RenderTargets;
 
     UPROPERTY(EditAnywhere, Category = "Inventory", meta = (AllowPrivateAccess))
     float CaptureDistance = 300.f;
@@ -50,4 +70,5 @@ private:
     FRotator CurrentRotation;
 
     virtual void BeginPlay() override;
+    void Tick(float DeltaSeconds) override;
 };

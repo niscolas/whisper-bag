@@ -10,6 +10,9 @@ class AItem3dManager;
 class APickableItem;
 class UInventoryItem;
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryUpdated);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 
 class WHISPERBAG_API UInventoryComponent : public UActorComponent {
@@ -21,7 +24,17 @@ public:
     UFUNCTION(BlueprintCallable)
     bool AddItem(APickableItem *PickableItem);
 
+    UFUNCTION(BlueprintCallable)
+
+    TArray<UInventoryItem *> GetItemsAsArray() {
+        Items.GenerateValueArray(ItemsArray);
+        return ItemsArray;
+    }
+
 private:
+    UPROPERTY(BlueprintAssignable, meta = (AllowPrivateAccess))
+    FInventoryUpdated InventoryUpdated;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
     TMap<EItemType, UInventoryItem *> Items;
 
@@ -36,6 +49,9 @@ private:
 
     UFUNCTION(BlueprintCallable)
     bool Add3dItem(EItemType Type, AActor *ItemInstance);
+
+    UPROPERTY()
+    TArray<UInventoryItem *> ItemsArray;
 
     AItem3dManager *GetItem3dManager();
 };

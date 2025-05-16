@@ -8,58 +8,64 @@ AItem3dManager::AItem3dManager() {
     SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
     RootComponent = SceneCapture;
 
-    RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("InventoryRenderTarget"));
-    RenderTarget->InitAutoFormat(512, 512);
-
     CurrentRotation = FRotator::ZeroRotator;
 }
 
 void AItem3dManager::BeginPlay() {
     Super::BeginPlay();
-
-    InitializeCaptureComponent();
 }
 
-void AItem3dManager::InitializeCaptureComponent() {
-    if (!SceneCapture || !RenderTarget) {
+void AItem3dManager::Tick(float DeltaSeconds) {
+    Super::Tick(DeltaSeconds);
+
+    if (!IsContinuousCaptureEnabled) {
         return;
     }
 
-    SceneCapture->TextureTarget = RenderTarget;
-    SceneCapture->CaptureSource = ESceneCaptureSource::SCS_SceneColorHDR;
-    SceneCapture->bCaptureEveryFrame = false;
-    SceneCapture->bCaptureOnMovement = false;
-    SceneCapture->FOVAngle = 45.f;
-    SceneCapture->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
-
-    SceneCapture->ShowFlags.SetAmbientOcclusion(true);
-    SceneCapture->ShowFlags.SetBloom(true);
+    SceneCapture->CaptureScene();
 }
 
-void AItem3dManager::ManageItem(AActor *Target) {
-    if (!Target) {
-        return;
-    }
-
-    Target->SetActorLocation(GetActorLocation());
-}
-
-void AItem3dManager::CaptureItem(AActor *Target) {
-    if (!Target || !SceneCapture) {
-        return;
-    }
+void AItem3dManager::StartContinuousCaptureFor(EItemType Type) {
+    IsContinuousCaptureEnabled = true;
+    ContinuousCaptureTarget = Type;
 
     ClearCapture();
 
-    CurrentlyCapturedItem = Target;
+    SceneCapture->TextureTarget = RenderTargets[ContinuousCaptureTarget].TextureRenderTarget;
+    SceneCapture->ShowOnlyActors.Add(RenderTargets[ContinuousCaptureTarget].Actor);
+    CurrentlyCapturedItem = RenderTargets[ContinuousCaptureTarget].Actor;
+}
+
+void AItem3dManager::StopContinuousCapture() {
+    IsContinuousCaptureEnabled = false;
+    ClearCapture();
+}
+
+UTextureRenderTarget2D *AItem3dManager::CaptureItem(EItemType Type, AActor *TargetActor) {
+    if (!TargetActor || !SceneCapture) {
+        return nullptr;
+    }
+
+    FItemCaptureData ItemCaptureData;
+    ItemCaptureData.TextureRenderTarget = NewObject<UTextureRenderTarget2D>(this);
+    ItemCaptureData.Actor = TargetActor;
+
+    RenderTargets.Add(Type, ItemCaptureData);
+    RenderTargets[Type].TextureRenderTarget->InitAutoFormat(512, 512);
+    SceneCapture->TextureTarget = RenderTargets[Type].TextureRenderTarget;
+
+    ClearCapture();
+
+    CurrentlyCapturedItem = TargetActor;
     CurrentRotation = FRotator::ZeroRotator;
 
-    SceneCapture->ShowOnlyActors.Add(Target);
+    SceneCapture->ShowOnlyActors.Add(TargetActor);
 
-    Target->SetActorLocation(GetActorLocation() + GetActorForwardVector() * CaptureDistance);
-    Target->SetActorRotation(FRotator::ZeroRotator);
-
+    TargetActor->SetActorLocation(GetActorLocation() + GetActorForwardVector() * CaptureDistance);
+    TargetActor->SetActorRotation(FRotator::ZeroRotator);
     SceneCapture->CaptureScene();
+
+    return RenderTargets[Type].TextureRenderTarget;
 }
 
 void AItem3dManager::ClearCapture() {
