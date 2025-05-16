@@ -9,7 +9,8 @@ class APickableItem;
 class UInventoryComponent;
 
 UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewDialogueTriggered, TArray<FText>, DialogueLines);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+    FNewDialogueTriggered, TArray<FText>, DialogueLines, ADialogueTrigger *, DialogueTriggerActor);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 

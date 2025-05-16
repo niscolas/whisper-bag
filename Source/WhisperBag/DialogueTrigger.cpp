@@ -1,4 +1,5 @@
 #include "DialogueTrigger.h"
+#include "CineCameraComponent.h"
 #include "Components/SphereComponent.h"
 
 ADialogueTrigger::ADialogueTrigger() {
@@ -12,4 +13,7 @@ ADialogueTrigger::ADialogueTrigger() {
     SphereCollider->SetSphereRadius(50);
 
     RootComponent = SphereCollider;
+
+    DialogueCameraComponent = CreateDefaultSubobject<UCineCameraComponent>("DialogueCamera");
+    DialogueCameraComponent->SetupAttachment(RootComponent);
 }

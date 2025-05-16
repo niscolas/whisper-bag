@@ -37,7 +37,8 @@ void UInteractorComponent::OnActorEndOverlap(AActor *OverlappedActor, AActor *Ot
 
 void UInteractorComponent::TryInteract() {
     if (PossibleDialogueTrigger) {
-        NewDialogueTriggered.Broadcast(PossibleDialogueTrigger->DialogueLines);
+        NewDialogueTriggered.Broadcast(PossibleDialogueTrigger->DialogueLines,
+                                       PossibleDialogueTrigger);
     } else if (InventoryComponent && PossiblePickableItem) {
         InventoryComponent->AddItem(PossiblePickableItem);
     }

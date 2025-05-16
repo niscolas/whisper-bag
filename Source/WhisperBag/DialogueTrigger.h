@@ -6,6 +6,7 @@
 #include "DialogueTrigger.generated.h"
 
 class USphereComponent;
+class UCineCameraComponent;
 
 UCLASS()
 
@@ -17,6 +18,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
     TArray<FText> DialogueLines;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+    UCineCameraComponent *DialogueCameraComponent;
 
 private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
