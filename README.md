@@ -2,6 +2,8 @@
 
 > 💡 A simple Unreal Engine game combining interactive inventory management and RPG-style dialogue
 
+https://github.com/user-attachments/assets/3a5f21c1-0c39-4e45-afc2-48bfcd9cc493
+
 ## ✨ Features  
 
 ### 🎒 **Inventory System**  
