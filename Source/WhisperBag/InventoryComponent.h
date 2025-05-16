@@ -25,6 +25,9 @@ public:
     bool AddItem(APickableItem *PickableItem);
 
     UFUNCTION(BlueprintCallable)
+    bool RemoveItem(EItemType Type);
+
+    UFUNCTION(BlueprintCallable)
 
     TArray<UInventoryItem *> GetItemsAsArray() {
         Items.GenerateValueArray(ItemsArray);

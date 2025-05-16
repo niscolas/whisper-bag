@@ -25,6 +25,16 @@ bool UInventoryComponent::AddItem(APickableItem *PickableItem) {
     return true;
 }
 
+bool UInventoryComponent::RemoveItem(EItemType Type) {
+    if (!Items.Contains(Type)) {
+        return false;
+    }
+
+    Items.Remove(Type);
+
+    return true;
+}
+
 bool UInventoryComponent::Add2dItem(EItemType Type, UTexture2D *Icon, AActor *ItemInstance) {
     UInventoryItem *NewItem = NewObject<UInventoryItem>(this);
 

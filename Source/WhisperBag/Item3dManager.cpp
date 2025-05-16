@@ -68,16 +68,12 @@ void AItem3dManager::ClearCapture() {
 }
 
 void AItem3dManager::RotateCapturedItem(float YawDelta, float PitchDelta) {
-    UE_LOG(LogTemp, Warning, TEXT("%f %f"), CurrentRotation.Yaw, CurrentRotation.Pitch);
-
     if (!CurrentlyCapturedItem) {
         return;
     }
 
     CurrentRotation.Yaw += YawDelta;
     CurrentRotation.Pitch = FMath::Clamp(CurrentRotation.Pitch + PitchDelta, MinPitch, MaxPitch);
-
-    UE_LOG(LogTemp, Warning, TEXT("%f %f"), CurrentRotation.Yaw, CurrentRotation.Pitch);
 
     CurrentlyCapturedItem->SetActorRotation(CurrentRotation);
     SceneCapture->CaptureScene();
