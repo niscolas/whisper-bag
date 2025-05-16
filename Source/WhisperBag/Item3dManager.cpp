@@ -15,22 +15,11 @@ void AItem3dManager::BeginPlay() {
     Super::BeginPlay();
 }
 
-void AItem3dManager::Tick(float DeltaSeconds) {
-    Super::Tick(DeltaSeconds);
-
-    if (!IsContinuousCaptureEnabled) {
-        return;
-    }
-
-    SceneCapture->CaptureScene();
-}
-
 void AItem3dManager::StartContinuousCaptureFor(EItemType Type) {
     if (!RenderTargets.Contains(Type)) {
         return;
     }
 
-    IsContinuousCaptureEnabled = true;
     ContinuousCaptureTarget = Type;
 
     ClearCapture();
@@ -41,7 +30,6 @@ void AItem3dManager::StartContinuousCaptureFor(EItemType Type) {
 }
 
 void AItem3dManager::StopContinuousCapture() {
-    IsContinuousCaptureEnabled = false;
     ClearCapture();
 }
 
@@ -80,6 +68,8 @@ void AItem3dManager::ClearCapture() {
 }
 
 void AItem3dManager::RotateCapturedItem(float YawDelta, float PitchDelta) {
+    UE_LOG(LogTemp, Warning, TEXT("%f %f"), CurrentRotation.Yaw, CurrentRotation.Pitch);
+
     if (!CurrentlyCapturedItem) {
         return;
     }
@@ -87,5 +77,8 @@ void AItem3dManager::RotateCapturedItem(float YawDelta, float PitchDelta) {
     CurrentRotation.Yaw += YawDelta;
     CurrentRotation.Pitch = FMath::Clamp(CurrentRotation.Pitch + PitchDelta, MinPitch, MaxPitch);
 
+    UE_LOG(LogTemp, Warning, TEXT("%f %f"), CurrentRotation.Yaw, CurrentRotation.Pitch);
+
     CurrentlyCapturedItem->SetActorRotation(CurrentRotation);
+    SceneCapture->CaptureScene();
 }

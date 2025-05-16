@@ -70,5 +70,4 @@ private:
     FRotator CurrentRotation;
 
     virtual void BeginPlay() override;
-    void Tick(float DeltaSeconds) override;
 };
